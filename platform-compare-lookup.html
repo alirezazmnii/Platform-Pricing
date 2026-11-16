@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>استعلام هم‌زمان سه پلتفرم</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#1d2330;--muted:#6b7385;--line:#e3e6ec;--accent:#2f5bd3;--accent-ink:#fff;
+  --ok:#1f8a4c;--ok-bg:#e6f5ec;--warn:#9a6700;--warn-bg:#fff4d6;--bad:#b42318;--bad-bg:#fdecea;--chip:#eef1f6}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#11141a;--card:#1a1f28;--ink:#e8ebf1;--muted:#98a1b3;--line:#2a313d;
+  --accent:#7d9cff;--accent-ink:#0d1220;--ok:#5fd18f;--ok-bg:#163525;--warn:#f0c35a;--warn-bg:#3a2f12;--bad:#ff8a80;--bad-bg:#3d1b18;--chip:#232a35}}
+:root[data-theme="dark"]{--bg:#11141a;--card:#1a1f28;--ink:#e8ebf1;--muted:#98a1b3;--line:#2a313d;--accent:#7d9cff;--accent-ink:#0d1220;
+  --ok:#5fd18f;--ok-bg:#163525;--warn:#f0c35a;--warn-bg:#3a2f12;--bad:#ff8a80;--bad-bg:#3d1b18;--chip:#232a35}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.7 Vazirmatn,Tahoma,sans-serif}
+main{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px}
+.sub{color:var(--muted);margin:0 0 20px;font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+select,input{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+select:focus,input:focus{outline:2px solid var(--accent);outline-offset:1px}
+.sites{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.site{border:1px solid var(--line);border-radius:10px;padding:12px}
+.site h3{margin:0 0 8px;font-size:15px;display:flex;align-items:center;gap:8px}
+.site h3 input{width:auto}
+.site.off{opacity:.45}
+.site .na{font-size:12px;color:var(--warn);background:var(--warn-bg);border-radius:6px;padding:4px 8px;margin-top:6px}
+.site .row{margin-top:8px}
+button{font:inherit;font-weight:700;border:0;border-radius:10px;padding:10px 22px;background:var(--accent);color:var(--accent-ink);cursor:pointer}
+button:disabled{opacity:.5;cursor:default}
+.bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.status{font-size:13px;color:var(--muted)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.chip{background:var(--chip);border-radius:999px;padding:4px 12px;font-size:13px}
+.chip.ok{background:var(--ok-bg);color:var(--ok)}.chip.bad{background:var(--bad-bg);color:var(--bad)}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:560px}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:center;white-space:nowrap}
+th:first-child,td:first-child{text-align:right}
+th{font-size:12px;color:var(--muted);font-weight:500}
+td.miss{color:var(--muted)}
+td .p{font-weight:700;font-variant-numeric:tabular-nums}
+td .c{display:block;font-size:12px;color:var(--ok)}
+td .lock{display:block;font-size:11px;color:var(--warn)}
+tr.partial td:first-child::after{content:" •";color:var(--warn)}
+.err{color:var(--bad);background:var(--bad-bg);border-radius:8px;padding:8px 12px;font-size:13px;white-space:pre-wrap}
+.cfg summary{cursor:pointer;color:var(--muted);font-size:13px}
+.legend{font-size:12px;color:var(--muted);margin-top:8px}
+</style>
+</head>
+<body>
+<main>
+  <h1>استعلام هم‌زمان ثالث در سه پلتفرم</h1>
+  <p class="sub">خودرو، کاربری و سال ساخت را انتخاب کن تا هم‌زمان از ازکی سلر، شوراکا و پلاس‌بیمه استعلام بگیرد و ببینی هر سایت کدام شرکت‌ها را نشان می‌دهد.</p>
+
+  <details class="card cfg" id="cfgBox">
+    <summary>تنظیمات اتصال به n8n</summary>
+    <div class="grid" style="margin-top:12px">
+      <div><label for="cfgBase">آدرس n8n (مثلاً https://n8n.example.com)</label><input id="cfgBase" dir="ltr"></div>
+      <div><label for="cfgKey">کلید</label><input id="cfgKey" dir="ltr"></div>
+    </div>
+    <div class="bar" style="margin-top:12px"><button type="button" id="cfgSave">ذخیره و بارگذاری کاتالوگ</button><span class="status" id="cfgStatus"></span></div>
+  </details>
+
+  <section class="card">
+    <div class="grid">
+      <div><label for="type">نوع وسیله</label><select id="type"></select></div>
+      <div><label for="usage">کاربری</label><select id="usage"></select></div>
+      <div><label for="year">سال ساخت</label><select id="year"></select></div>
+      <div><label for="q">جستجوی خودرو (مثلاً پژو 206 تیپ 2)</label><input id="q" placeholder="نام برند و مدل"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="sites" id="sites"></div>
+    <p class="legend">با جستجو، نزدیک‌ترین مدل در هر سایت خودکار انتخاب می‌شود. اگر درست نبود، در همان سایت عوضش کن. تیک هر سایت را بردار تا آن سایت استعلام نشود.</p>
+  </section>
+
+  <div class="bar" style="margin-bottom:16px"><button type="button" id="go" disabled>استعلام از هر سه سایت</button><span class="status" id="status">در حال بارگذاری کاتالوگ…</span></div>
+
+  <section class="card" id="result" hidden></section>
+</main>
+<script>
+const SITES = [
+  { id: 'site1', name: 'ازکی سلر' },
+  { id: 'site2', name: 'شوراکا' },
+  { id: 'site3', name: 'پلاس‌بیمه' }
+];
+// ---- config (per viewer) ----
+const store = { get(k) { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+const DEFAULT_BASE = ''; // آدرس n8n را اینجا بگذار تا برای همه از قبل پر باشد
+const DEFAULT_KEY = 'J4mm3PdLfiFKMwRNfp4bIM6h';
+let BASE = (store.get('pc_base') || DEFAULT_BASE).replace(/\/+$/, ''), KEY = store.get('pc_key') || DEFAULT_KEY;
+const $ = id => document.getElementById(id);
+$('cfgBase').value = BASE; $('cfgKey').value = KEY;
+$('cfgSave').onclick = () => { BASE = $('cfgBase').value.trim().replace(/\/+$/, ''); KEY = $('cfgKey').value.trim(); store.set('pc_base', BASE); store.set('pc_key', KEY); loadCatalog(); };
+
+// ---- text helpers ----
+const FA = '۰۱۲۳۴۵۶۷۸۹', AR = '٠١٢٣٤٥٦٧٨٩';
+const norm = s => String(s || '').replace(/[۰-۹]/g, d => FA.indexOf(d)).replace(/[٠-٩]/g, d => AR.indexOf(d))
+  .replace(/ي/g, 'ی').replace(/ك/g, 'ک').replace(/[‌\-_()\/.,]+/g, ' ').toLowerCase().replace(/\s+/g, ' ').trim();
+const USAGE_ALIAS = { 'آژانس': 'تاکسی اینترنتی یا آژانس', 'تاکسی های اینترنتی یا آژانس': 'تاکسی اینترنتی یا آژانس', 'یخچال دار': 'یخچالدار' };
+const uName = s => USAGE_ALIAS[String(s).trim()] || String(s).trim();
+const TYPE_ALIAS = { 'اتوبوس و مینی بوس': ['اتوبوس', 'مینی بوس'] };
+const fmt = n => n == null ? '—' : Math.round(n).toLocaleString('fa-IR');
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+// ---- catalog ----
+let CAT = null; // {site1:{types:[...]}, ...}
+function siteTypes(site) {             // unified type name -> site type object
+  const out = {};
+  for (const t of (CAT[site] && CAT[site].types) || []) for (const n of TYPE_ALIAS[t.name] || [t.name]) out[n] = t;
+  return out;
+}
+async function loadCatalog() {
+  $('go').disabled = true; $('status').textContent = 'در حال بارگذاری کاتالوگ…';
+  if (!BASE || !KEY) { $('status').textContent = 'اول آدرس n8n و کلید را در «تنظیمات اتصال» وارد کن.'; $('cfgBox').open = true; return; }
+  try {
+    const r = await fetch(BASE + '/webhook/compare-catalog?key=' + encodeURIComponent(KEY));
+    const j = await r.json();
+    if (!r.ok || j.error) throw new Error(j.error || ('HTTP ' + r.status));
+    CAT = j; $('cfgStatus').textContent = 'وصل شد';
+    const counts = SITES.map(s => s.name + ': ' + (((CAT[s.id] || {}).types || []).reduce((a, t) => a + t.brands.reduce((b, x) => b + x.models.length, 0), 0)).toLocaleString('fa-IR') + ' مدل');
+    $('status').textContent = 'کاتالوگ آماده است · ' + counts.join(' · ');
+    buildTypes(); $('go').disabled = false;
+  } catch (e) {
+    $('status').textContent = ''; $('cfgBox').open = true;
+    $('cfgStatus').innerHTML = '<span class="err">کاتالوگ بارگذاری نشد: ' + esc(e.message) + '</span>';
+  }
+}
+function buildTypes() {
+  const names = [];
+  for (const s of SITES) for (const n of Object.keys(siteTypes(s.id))) if (!names.includes(n)) names.push(n);
+  const order = ['سواری', 'وانت', 'ون', 'کامیونت', 'کامیون', 'مینی بوس', 'اتوبوس', 'موتور سیکلت'];
+  names.sort((a, b) => (order.indexOf(a) + 1 || 99) - (order.indexOf(b) + 1 || 99));
+  $('type').innerHTML = names.map(n => `<option>${esc(n)}</option>`).join('');
+  onType();
+}
+function onType() {
+  const t = $('type').value, us = [];
+  for (const s of SITES) { const st = siteTypes(s.id)[t]; for (const [n] of (st ? st.usages : [])) if (!us.includes(uName(n))) us.push(uName(n)); }
+  const prev = $('usage').value;
+  $('usage').innerHTML = us.map(n => `<option${n === prev ? ' selected' : ''}>${esc(n)}</option>`).join('');
+  if (!$('usage').value && us.includes('شخصی')) $('usage').value = 'شخصی';
+  buildSites();
+}
+function buildSites() {
+  const t = $('type').value, u = $('usage').value;
+  $('sites').innerHTML = SITES.map(s => {
+    const st = siteTypes(s.id)[t];
+    const usage = st && st.usages.find(([n]) => uName(n) === u);
+    const opts = st ? st.brands.flatMap(b => b.models.map(([mn, mid]) => ({ v: b.id + '|' + mid, label: (mn === b.name || mn.startsWith(b.name) ? mn : b.name + ' — ' + mn) }))) : [];
+    return `<div class="site${st ? '' : ' off'}" data-site="${s.id}">
+      <h3><input type="checkbox" ${st && usage ? 'checked' : ''} ${st ? '' : 'disabled'}> ${s.name}</h3>
+      ${!st ? '<div class="na">این نوع وسیله در این سایت نیست</div>' : !usage ? '<div class="na">این کاربری برای این نوع وسیله در این سایت نیست</div>' : ''}
+      <div class="row"><label>خودرو در ${s.name}</label>
+        <select class="model" ${st ? '' : 'disabled'}>${opts.map(o => `<option value="${esc(o.v)}">${esc(o.label)}</option>`).join('')}</select></div>
+    </div>`;
+  }).join('');
+  autoMatch();
+}
+function score(q, label) {
+  const a = norm(q).split(' ').filter(Boolean), b = norm(label);
+  if (!a.length) return 0;
+  let s = 0; for (const w of a) if (b.includes(w)) s += w.length + 2;
+  return s - b.length / 100;
+}
+function autoMatch() {
+  const q = $('q').value;
+  if (!q.trim()) return;
+  for (const sel of document.querySelectorAll('.site select.model')) {
+    let best = -1, bi = 0;
+    [...sel.options].forEach((o, i) => { const sc = score(q, o.textContent); if (sc > best) { best = sc; bi = i; } });
+    if (sel.options.length) sel.selectedIndex = bi;
+  }
+}
+$('type').onchange = onType; $('usage').onchange = buildSites; $('q').oninput = autoMatch;
+$('year').innerHTML = Array.from({ length: 46 }, (_, i) => 1405 - i).map(y => `<option value="${y}">${y.toLocaleString('fa-IR', { useGrouping: false })}</option>`).join('');
+$('year').value = '1397';
+
+// ---- lookup ----
+$('go').onclick = async () => {
+  const t = $('type').value, u = $('usage').value, year = +$('year').value, sites = {};
+  for (const box of document.querySelectorAll('.site')) {
+    const s = box.dataset.site, st = siteTypes(s)[t];
+    if (!st || !box.querySelector('input[type=checkbox]').checked) continue;
+    const usage = st.usages.find(([n]) => uName(n) === u); if (!usage) continue;
+    const sel = box.querySelector('select.model'); if (!sel.value) continue;
+    const [brand_id, model_id] = sel.value.split('|');
+    sites[s] = { vehicle_type: st.name, type_id: st.id, brand_id, model_id, usage_id: usage[1], label: sel.selectedOptions[0].textContent };
+  }
+  if (!Object.keys(sites).length) { $('status').textContent = 'هیچ سایتی برای استعلام انتخاب نشده.'; return; }
+  $('go').disabled = true; $('status').textContent = 'در حال استعلام… (۱۰ تا ۳۰ ثانیه)';
+  try {
+    const body = new URLSearchParams({ payload: JSON.stringify({ key: KEY, year, usage: u, sites }) });
+    const r = await fetch(BASE + '/webhook/compare-lookup', { method: 'POST', body });
+    const j = await r.json();
+    if (!r.ok || j.error) throw new Error(j.error || ('HTTP ' + r.status));
+    render(j, t, u, year); $('status').textContent = '';
+  } catch (e) {
+    $('result').hidden = false; $('result').innerHTML = `<div class="err">استعلام انجام نشد: ${esc(e.message)}</div>`; $('status').textContent = '';
+  } finally { $('go').disabled = false; }
+};
+function render(j, t, u, year) {
+  const chips = SITES.map(s => {
+    const r = j.sites[s.id];
+    if (!r || r.skipped) return `<span class="chip">${s.name}: استعلام نشد</span>`;
+    if (!r.ok) return `<span class="chip bad" title="${esc(r.error)}">${s.name}: خطا</span>`;
+    return `<span class="chip ok">${s.name}: ${(r.companies || []).length.toLocaleString('fa-IR')} شرکت</span>`;
+  }).join('');
+  const errs = SITES.filter(s => j.sites[s.id] && j.sites[s.id].ok === false).map(s => `<div class="err" style="margin-bottom:8px"><b>${s.name}:</b> ${esc(j.sites[s.id].error)}</div>`).join('');
+  const active = SITES.filter(s => j.sites[s.id] && j.sites[s.id].ok);
+  const rows = (j.companies || []).map(c => {
+    const n = active.filter(s => c[s.id]).length;
+    return `<tr class="${n < active.length ? 'partial' : ''}"><td>${esc(c.company)}</td>${active.map(s => {
+      const v = c[s.id]; if (!v) return '<td class="miss">—</td>';
+      return `<td><span class="p">${fmt(v.premium)}</span>${v.commission != null ? `<span class="c">کارمزد ${v.commission.toLocaleString('fa-IR')}٪</span>` : ''}${v.locked ? '<span class="lock">قفل</span>' : ''}</td>`;
+    }).join('')}</tr>`;
+  }).join('');
+  const req = SITES.filter(s => j.request[s.id]).map(s => `${s.name}: ${esc(j.request[s.id].label)}`).join(' · ');
+  $('result').hidden = false;
+  $('result').innerHTML = `<h2 style="margin:0 0 4px;font-size:17px">${esc(t)} · ${esc(u)} · مدل ${year.toLocaleString('fa-IR', { useGrouping: false })}</h2>
+    <p class="sub" style="margin-bottom:12px">${req}</p>
+    <div class="chips">${chips}</div>${errs}
+    ${active.length ? `<div class="tablewrap"><table><thead><tr><th>شرکت بیمه</th>${active.map(s => `<th>${s.name}<br>حق بیمه (تومان)</th>`).join('')}</tr></thead><tbody>${rows || `<tr><td colspan="${active.length + 1}">هیچ شرکتی برنگشت</td></tr>`}</tbody></table></div>
+    <p class="legend">— یعنی آن سایت این شرکت را برای این خودرو نشان نمی‌دهد. • کنار نام شرکت یعنی همه‌ی سایت‌ها آن را ندارند. قیمت‌ها نقدی، یک‌ساله، پوشش مالی ۷۰ میلیون و بدون بیمه‌نامه‌ی قبلی است.</p>` : ''}`;
+}
+loadCatalog();
+</script>
+</body>
+</html>
